@@ -48,3 +48,6 @@ build/
 # Sistema
 .DS_Store
 Thumbs.db
+
+### env and DevOps ###
+.env
