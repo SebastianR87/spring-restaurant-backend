@@ -19,8 +19,9 @@ import utp.edu.pe.restaurante.service.CategoriaService;
 @Transactional
 public class CategoriaServiceImpl implements CategoriaService {
 
-    @Autowired
+	@Autowired
     private CategoriaRepository categoriaRepository;
+	
 
     @Autowired
     private PlatoRepository platoRepository;
@@ -59,18 +60,23 @@ public class CategoriaServiceImpl implements CategoriaService {
         return categoriaRepository.save(categoria);
     }
 
+
+    
+    
     @Override
     @Transactional
     public void desactivarCategoriaYPlatos(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(CATEGORIA_NOT_FOUND + id));
-
+        
+        // Desactivar todos los platos de esta categoría
         List<Plato> platos = platoRepository.findByCategoriaIdAndActivoTrue(id);
         for (Plato plato : platos) {
             plato.setActivo(false);
             platoRepository.save(plato);
         }
-
+        
+        // Desactivar la categoría
         categoria.setActiva(false);
         categoriaRepository.save(categoria);
     }
@@ -80,10 +86,15 @@ public class CategoriaServiceImpl implements CategoriaService {
     public Categoria reactivarCategoria(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(CATEGORIA_NOT_FOUND + id));
-
+        
+        // Solo reactivar la categoría, los platos quedan inactivos
         categoria.setActiva(true);
         return categoriaRepository.save(categoria);
+        
+       
     }
+    
+    
 
     @Override
     @Transactional(readOnly = true)
@@ -121,12 +132,13 @@ public class CategoriaServiceImpl implements CategoriaService {
         if (categoria.getNombre() == null || categoria.getNombre().trim().isEmpty()) {
             throw new BusinessException("El nombre de la categoría es obligatorio");
         }
-
+        
         Optional<Categoria> categoriaExistente = categoriaRepository.findByNombreIgnoreCase(categoria.getNombre());
-        if (categoriaExistente.isPresent() &&
-                (categoria.getId() == null || !categoriaExistente.get().getId().equals(categoria.getId()))) {
+        if (categoriaExistente.isPresent() && 
+            (categoria.getId() == null || !categoriaExistente.get().getId().equals(categoria.getId()))) {
             throw new BusinessException("Ya existe una categoría con el nombre: " + categoria.getNombre());
         }
     }
 
 }
+
