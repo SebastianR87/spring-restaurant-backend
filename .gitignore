@@ -32,3 +32,19 @@ build/
 ### VS Code ###
 # Mantenemos .vscode/ para compartir configuración recomendada del proyecto
 # .vscode/
+
+# Backend (Spring Boot)
+/target/
+/.idea/
+/.vscode/
+*.log
+
+# Frontend (Angular)
+/Angular-restaurant-frontend/node_modules/
+/Angular-restaurant-frontend/dist/
+/Angular-restaurant-frontend/.angular/
+/Angular-restaurant-frontend/.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db
