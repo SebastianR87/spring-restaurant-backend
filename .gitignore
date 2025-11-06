@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Angular / Node ###
+Angular-restaurant-frontend/node_modules/
+Angular-restaurant-frontend/dist/
+Angular-restaurant-frontend/.angular/
+Angular-restaurant-frontend/package-lock.json
+Angular-restaurant-frontend/.env
