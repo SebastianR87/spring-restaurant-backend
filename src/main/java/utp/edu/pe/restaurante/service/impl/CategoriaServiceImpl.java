@@ -90,8 +90,18 @@ public class CategoriaServiceImpl implements CategoriaService {
         // Solo reactivar la categoría, los platos quedan inactivos
         categoria.setActiva(true);
         return categoriaRepository.save(categoria);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategoria(Long id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(CATEGORIA_NOT_FOUND + id));
         
-       
+        // Validar que no tenga platos activos
+        validateCategoriaHasNoPlatos(id);
+        
+        categoriaRepository.delete(categoria);
     }
     
     

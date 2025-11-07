@@ -2,7 +2,6 @@ package utp.edu.pe.restaurante.service;
 
 import utp.edu.pe.restaurante.dto.request.LoginRequest;
 import utp.edu.pe.restaurante.dto.response.LoginResponse;
-import utp.edu.pe.restaurante.entity.Usuario;
 
 /**
  * Interfaz del servicio de autenticación

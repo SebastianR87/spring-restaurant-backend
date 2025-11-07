@@ -25,10 +25,21 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
     this.isAuthenticated = this.authService.isAuthenticated();
     this.currentUser = this.authService.getCurrentUser();
     
+    // Si el usuario es admin, redirigir al panel admin
+    if (this.authService.isAdmin()) {
+      this.router.navigate(['/admin']);
+      return;
+    }
+    
     // Suscribirse a cambios en el estado de autenticación
     this.authSubscription = this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = user !== null;
       this.currentUser = user;
+      
+      // Si el usuario se convierte en admin, redirigir
+      if (user && this.authService.isAdmin()) {
+        this.router.navigate(['/admin']);
+      }
     });
   }
 

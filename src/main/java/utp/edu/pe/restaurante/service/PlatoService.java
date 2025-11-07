@@ -14,6 +14,7 @@ public interface PlatoService {
     Plato update(Long id, Plato plato);
    
     void desactivarPlato(Long id);
+    void deletePlato(Long id);
   
     List<Plato> findAllActive();
     List<Plato> findByCategoriaId(Long categoriaId);

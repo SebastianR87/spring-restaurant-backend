@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
 import utp.edu.pe.restaurante.dto.PlatoDTO;
 import utp.edu.pe.restaurante.dto.request.CreatePlatoRequest;
@@ -14,6 +16,7 @@ import utp.edu.pe.restaurante.entity.Categoria;
 import utp.edu.pe.restaurante.entity.Plato;
 import utp.edu.pe.restaurante.exception.ValidationException;
 import utp.edu.pe.restaurante.mapper.PlatoMapper;
+import utp.edu.pe.restaurante.service.FileStorageService;
 import utp.edu.pe.restaurante.service.PlatoService;
 
 @RestController
@@ -26,6 +29,9 @@ public class AdminPlatoController {
 
     @Autowired
     private PlatoMapper platoMapper;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @GetMapping
     public ResponseEntity<List<PlatoDTO>> getAllPlatos() {
@@ -58,6 +64,45 @@ public class AdminPlatoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(platoMapper.toDTO(savedPlato));
     }
 
+    /**
+     * Endpoint alternativo para crear plato con subida de imagen
+     * Permite subir una imagen junto con los datos del plato
+     */
+    @PostMapping(value = "/con-imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PlatoDTO> createPlatoWithImage(
+            @RequestParam("nombre") String nombre,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam("precio") java.math.BigDecimal precio,
+            @RequestParam("categoriaId") Long categoriaId,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            @RequestParam(value = "imagenUrl", required = false) String imagenUrl,
+            @RequestParam(value = "tiempoPreparacion", required = false) Integer tiempoPreparacion,
+            @RequestParam(value = "disponibleDomicilio", required = false, defaultValue = "true") Boolean disponibleDomicilio) {
+        
+        try {
+            // Si se subió una imagen, guardarla
+            String finalImagenUrl = imagenUrl;
+            if (imagen != null && !imagen.isEmpty()) {
+                finalImagenUrl = fileStorageService.saveFile(imagen, "platos");
+            }
+
+            // Crear el request
+            CreatePlatoRequest request = new CreatePlatoRequest();
+            request.setNombre(nombre);
+            request.setDescripcion(descripcion);
+            request.setPrecio(precio);
+            request.setCategoriaId(categoriaId);
+            request.setImagenUrl(finalImagenUrl);
+            request.setTiempoPreparacion(tiempoPreparacion);
+            request.setDisponibleDomicilio(disponibleDomicilio);
+
+            // Usar el método existente
+            return createPlato(request);
+        } catch (Exception e) {
+            throw new ValidationException("Error al procesar la imagen: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<PlatoDTO> updatePlato(@PathVariable Long id, @RequestBody UpdatePlatoRequest request) {
 
@@ -79,6 +124,12 @@ public class AdminPlatoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desactivarPlato(@PathVariable Long id) {
         platoService.desactivarPlato(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/permanente")
+    public ResponseEntity<Void> deletePlato(@PathVariable Long id) {
+        platoService.deletePlato(id);
         return ResponseEntity.noContent().build();
     }
 

@@ -93,13 +93,15 @@ public class PlatoServiceImpl implements PlatoService {
 	        plato.setActivo(false);
 	        platoRepository.save(plato);
 	    }
-	  
-	    
-	    
 
-	    
-	    
-	    
+	    @Override
+	    @Transactional
+	    public void deletePlato(Long id) {
+	        Plato plato = platoRepository.findById(id)
+	                .orElseThrow(() -> new ResourceNotFoundException(PLATO_NOT_FOUND + id));
+	        
+	        platoRepository.delete(plato);
+	    }
 
 	    @Override
 	    @Transactional(readOnly = true)

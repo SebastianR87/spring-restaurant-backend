@@ -36,16 +36,21 @@ export class LoginComponent {
       next: (response) => {
         this.isLoading = false;
         if (response.message === 'Login exitoso') {
+          // Verificar si el usuario es admin
+          const isAdmin = response.rol === 'ADMIN' || response.rol === 'admin';
+          
           // Obtener la URL de retorno guardada
           const returnUrl = this.authService.getReturnUrl();
           
-          if (returnUrl && returnUrl !== '/login') {
-            // Redirigir a la URL donde estaba antes
+          if (returnUrl && returnUrl !== '/login' && !isAdmin) {
+            // Redirigir a la URL donde estaba antes (solo si no es admin)
             this.authService.clearReturnUrl();
             this.router.navigateByUrl(returnUrl);
           } else {
+            // Si es admin, siempre redirigir al panel admin
             // Si no hay URL de retorno, redirigir según el rol
-            if (response.rol === 'ADMIN') {
+            if (isAdmin) {
+              this.authService.clearReturnUrl(); // Limpiar returnUrl si existe
               this.router.navigate(['/admin']);
             } else {
               this.router.navigate(['/menu']);

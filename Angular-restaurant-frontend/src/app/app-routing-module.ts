@@ -6,6 +6,7 @@ import { Admin } from './components/admin/admin';
 import { Home } from './components/home/home';
 import { PedidoComponent } from './components/pedido/pedido';
 import { MisPedidosComponent } from './components/mis-pedidos/mis-pedidos';
+import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   { path: '', component: Home },
@@ -13,7 +14,7 @@ const routes: Routes = [
   { path: 'menu', component: Menu },
   { path: 'pedido', component: PedidoComponent },
   { path: 'mis-pedidos', component: MisPedidosComponent },
-  { path: 'admin', component: Admin },
+  { path: 'admin', component: Admin, canActivate: [AdminGuard] },
 ];
 
 @NgModule({

@@ -16,6 +16,7 @@ public interface CategoriaService {
 	    
 	    
 	    void desactivarCategoriaYPlatos(Long id);
+	    void deleteCategoria(Long id);
 	   
 	    Categoria reactivarCategoria(Long id);
 	    

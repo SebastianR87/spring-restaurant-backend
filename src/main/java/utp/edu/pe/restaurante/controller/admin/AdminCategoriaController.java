@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/categorias")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class AdminCategoriaController {
 
 	@Autowired
@@ -64,6 +64,12 @@ public class AdminCategoriaController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> desactivarCategoria(@PathVariable Long id) {
 		categoriaService.desactivarCategoriaYPlatos(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/{id}/permanente")
+	public ResponseEntity<Void> deleteCategoria(@PathVariable Long id) {
+		categoriaService.deleteCategoria(id);
 		return ResponseEntity.noContent().build();
 	}
 

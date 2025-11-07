@@ -38,3 +38,7 @@ Angular-restaurant-frontend/dist/
 Angular-restaurant-frontend/.angular/
 Angular-restaurant-frontend/package-lock.json
 Angular-restaurant-frontend/.env
+
+### Uploads / Archivos subidos ###
+uploads/
+**/uploads/

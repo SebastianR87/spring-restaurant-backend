@@ -51,7 +51,12 @@ public class AdminPedidoController {
 
     @PatchMapping("/{id}/estado")
     public ResponseEntity<PedidoDTO> actualizarEstado(@PathVariable Long id, @RequestBody String nuevoEstado) {
-        PedidoDTO pedido = pedidoService.actualizarEstado(id, nuevoEstado);
+        // Limpiar el string si viene con comillas JSON
+        String estadoLimpio = nuevoEstado;
+        if (estadoLimpio != null && estadoLimpio.startsWith("\"") && estadoLimpio.endsWith("\"")) {
+            estadoLimpio = estadoLimpio.substring(1, estadoLimpio.length() - 1);
+        }
+        PedidoDTO pedido = pedidoService.actualizarEstado(id, estadoLimpio);
         return ResponseEntity.ok(pedido);
     }
 }
