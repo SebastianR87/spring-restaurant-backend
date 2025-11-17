@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import utp.edu.pe.restaurante.entity.Reserva;
 import utp.edu.pe.restaurante.entity.Usuario;
 import utp.edu.pe.restaurante.service.ReservaService;
-import utp.edu.pe.restaurante.repository.ReservaRepository;
 import utp.edu.pe.restaurante.repository.UsuarioRepository;
 
 import java.time.LocalDateTime;

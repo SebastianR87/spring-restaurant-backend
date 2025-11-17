@@ -2,7 +2,6 @@ package utp.edu.pe.restaurante.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import utp.edu.pe.restaurante.dto.DetallePedidoDTO;
 import utp.edu.pe.restaurante.dto.request.CreateDetallePedidoRequest;
 import utp.edu.pe.restaurante.entity.DetallePedido;

@@ -8,7 +8,6 @@ import utp.edu.pe.restaurante.dto.CategoriaDTO;
 import utp.edu.pe.restaurante.entity.Categoria;
 import utp.edu.pe.restaurante.mapper.CategoriaMapper;
 import utp.edu.pe.restaurante.service.CategoriaService;
-import utp.edu.pe.restaurante.service.PlatoService;
 
 import java.util.List;
 

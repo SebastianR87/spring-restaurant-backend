@@ -34,6 +34,7 @@ public interface PedidoMapper {
     @Mapping(target = "fechaEnvio", ignore = true)
     @Mapping(target = "fechaEntrega", ignore = true)
     @Mapping(target = "detalles", ignore = true)
+    @Mapping(target = "activo", constant = "true")
     Pedido toEntity(CreatePedidoRequest request);
 
     
@@ -47,6 +48,7 @@ public interface PedidoMapper {
     @Mapping(target = "fechaEnvio", ignore = true)
     @Mapping(target = "fechaEntrega", ignore = true)
     @Mapping(target = "detalles", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntity(@MappingTarget Pedido pedido, UpdatePedidoRequest request);
 
     

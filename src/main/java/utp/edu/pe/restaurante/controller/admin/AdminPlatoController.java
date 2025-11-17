@@ -121,6 +121,55 @@ public class AdminPlatoController {
         return ResponseEntity.ok(platoMapper.toDTO(updatedPlato));
     }
 
+    /**
+     * Endpoint para actualizar plato con subida de imagen
+     * Permite actualizar un plato y subir una nueva imagen
+     */
+    @PutMapping(value = "/{id}/con-imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PlatoDTO> updatePlatoWithImage(
+            @PathVariable Long id,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam("precio") java.math.BigDecimal precio,
+            @RequestParam("categoriaId") Long categoriaId,
+            @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+            @RequestParam(value = "imagenUrl", required = false) String imagenUrl,
+            @RequestParam(value = "tiempoPreparacion", required = false) Integer tiempoPreparacion,
+            @RequestParam(value = "disponibleDomicilio", required = false) Boolean disponibleDomicilio,
+            @RequestParam(value = "activo", required = false) Boolean activo) {
+        
+        try {
+            // Obtener el plato existente para preservar la imagen si no se sube una nueva
+            Plato platoExistente = platoService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Plato no encontrado"));
+            
+            // Si se subió una nueva imagen, guardarla
+            String finalImagenUrl = imagenUrl;
+            if (imagen != null && !imagen.isEmpty()) {
+                finalImagenUrl = fileStorageService.saveFile(imagen, "platos");
+            } else if (finalImagenUrl == null || finalImagenUrl.trim().isEmpty()) {
+                // Si no se subió nueva imagen y no se proporcionó imagenUrl, preservar la existente
+                finalImagenUrl = platoExistente.getImagenUrl();
+            }
+
+            // Crear el request
+            UpdatePlatoRequest updateRequest = new UpdatePlatoRequest();
+            updateRequest.setNombre(nombre);
+            updateRequest.setDescripcion(descripcion);
+            updateRequest.setPrecio(precio);
+            updateRequest.setCategoriaId(categoriaId);
+            updateRequest.setImagenUrl(finalImagenUrl);
+            updateRequest.setTiempoPreparacion(tiempoPreparacion);
+            updateRequest.setDisponibleDomicilio(disponibleDomicilio);
+            updateRequest.setActivo(activo);
+
+            // Usar el método existente
+            return updatePlato(id, updateRequest);
+        } catch (Exception e) {
+            throw new ValidationException("Error al procesar la imagen: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desactivarPlato(@PathVariable Long id) {
         platoService.desactivarPlato(id);

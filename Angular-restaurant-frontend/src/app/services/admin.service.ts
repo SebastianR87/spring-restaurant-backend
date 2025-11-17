@@ -26,9 +26,48 @@ export class AdminService {
     return this.http.post<Plato>(`${this.apiUrl}/platos`, plato, { headers });
   }
 
+  createPlatoWithImage(plato: any, image: File): Observable<Plato> {
+    const formData = new FormData();
+    formData.append('nombre', plato.nombre);
+    formData.append('descripcion', plato.descripcion || '');
+    formData.append('precio', plato.precio.toString());
+    formData.append('categoriaId', plato.categoriaId.toString());
+    formData.append('imagen', image);
+    if (plato.tiempoPreparacion) {
+      formData.append('tiempoPreparacion', plato.tiempoPreparacion.toString());
+    }
+    if (plato.disponibleDomicilio !== undefined) {
+      formData.append('disponibleDomicilio', plato.disponibleDomicilio.toString());
+    }
+    return this.http.post<Plato>(`${this.apiUrl}/platos/con-imagen`, formData);
+  }
+
   updatePlato(id: number, plato: any): Observable<Plato> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.put<Plato>(`${this.apiUrl}/platos/${id}`, plato, { headers });
+  }
+
+  updatePlatoWithImage(id: number, plato: any, image: File): Observable<Plato> {
+    const formData = new FormData();
+    formData.append('nombre', plato.nombre);
+    formData.append('descripcion', plato.descripcion || '');
+    formData.append('precio', plato.precio.toString());
+    formData.append('categoriaId', plato.categoriaId.toString());
+    formData.append('imagen', image);
+    if (plato.tiempoPreparacion) {
+      formData.append('tiempoPreparacion', plato.tiempoPreparacion.toString());
+    }
+    if (plato.disponibleDomicilio !== undefined) {
+      formData.append('disponibleDomicilio', plato.disponibleDomicilio.toString());
+    }
+    if (plato.activo !== undefined) {
+      formData.append('activo', plato.activo.toString());
+    }
+    // Incluir la imagenUrl existente si hay una, para preservarla si no se sube nueva
+    if (plato.imagenUrl) {
+      formData.append('imagenUrl', plato.imagenUrl);
+    }
+    return this.http.put<Plato>(`${this.apiUrl}/platos/${id}/con-imagen`, formData);
   }
 
   desactivarPlato(id: number): Observable<void> {

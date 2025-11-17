@@ -24,9 +24,6 @@ public class AdminCategoriaController {
 	private CategoriaService categoriaService;
 
 	@Autowired
-	private PlatoService platoService;
-
-	@Autowired
 	private CategoriaMapper categoriaMapper;
 
 	@GetMapping

@@ -1,6 +1,5 @@
 package utp.edu.pe.restaurante.exception.error;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

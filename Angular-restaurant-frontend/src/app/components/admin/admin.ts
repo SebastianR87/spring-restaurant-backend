@@ -51,6 +51,9 @@ export class Admin implements OnInit {
     activo: true
   };
   
+  selectedImage: File | null = null;
+  imagePreview: string | null = null;
+  
   categoriaForm: any = {
     nombre: '',
     descripcion: '',
@@ -178,6 +181,9 @@ export class Admin implements OnInit {
   }
   
   openPlatoModal(plato?: Plato): void {
+    this.selectedImage = null;
+    this.imagePreview = null;
+    
     if (plato) {
       this.editingPlato = plato;
       this.platoForm = {
@@ -185,10 +191,17 @@ export class Admin implements OnInit {
         descripcion: plato.descripcion || '',
         precio: plato.precio,
         categoriaId: plato.categoriaId,
+        imagenUrl: plato.imagenUrl || '', // Incluir imagenUrl para preservarla
         tiempoPreparacion: plato.tiempoPreparacion || 0,
         disponibleDomicilio: plato.disponibleDomicilio ?? true,
         activo: plato.activo ?? true
       };
+      // Si el plato tiene imagen, mostrar preview
+      if (plato.imagenUrl) {
+        this.imagePreview = plato.imagenUrl.startsWith('http') 
+          ? plato.imagenUrl 
+          : `http://localhost:8080${plato.imagenUrl}`;
+      }
     } else {
       this.editingPlato = null;
       this.platoForm = {
@@ -207,6 +220,21 @@ export class Admin implements OnInit {
   closePlatoModal(): void {
     this.showPlatoModal = false;
     this.editingPlato = null;
+    this.selectedImage = null;
+    this.imagePreview = null;
+  }
+  
+  onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedImage = file;
+      // Crear preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   }
   
   savePlato(): void {
@@ -216,22 +244,44 @@ export class Admin implements OnInit {
     }
     
     this.loading = true;
-    const operation = this.editingPlato
-      ? this.adminService.updatePlato(this.editingPlato.id, this.platoForm)
-      : this.adminService.createPlato(this.platoForm);
     
-    operation.subscribe({
-      next: () => {
-        this.showSuccess(this.editingPlato ? 'Plato actualizado' : 'Plato creado');
-        this.closePlatoModal();
-        this.loadPlatos();
-        this.loadDashboard();
-      },
-      error: () => {
-        this.showError('Error al guardar plato');
-        this.loading = false;
-      }
-    });
+    // Si hay una imagen seleccionada, usar el método con FormData
+    if (this.selectedImage) {
+      const operation = this.editingPlato
+        ? this.adminService.updatePlatoWithImage(this.editingPlato.id, this.platoForm, this.selectedImage)
+        : this.adminService.createPlatoWithImage(this.platoForm, this.selectedImage);
+      
+      operation.subscribe({
+        next: () => {
+          this.showSuccess(this.editingPlato ? 'Plato actualizado' : 'Plato creado');
+          this.closePlatoModal();
+          this.loadPlatos();
+          this.loadDashboard();
+        },
+        error: () => {
+          this.showError('Error al guardar plato');
+          this.loading = false;
+        }
+      });
+    } else {
+      // Si no hay imagen, usar el método normal
+      const operation = this.editingPlato
+        ? this.adminService.updatePlato(this.editingPlato.id, this.platoForm)
+        : this.adminService.createPlato(this.platoForm);
+      
+      operation.subscribe({
+        next: () => {
+          this.showSuccess(this.editingPlato ? 'Plato actualizado' : 'Plato creado');
+          this.closePlatoModal();
+          this.loadPlatos();
+          this.loadDashboard();
+        },
+        error: () => {
+          this.showError('Error al guardar plato');
+          this.loading = false;
+        }
+      });
+    }
   }
   
   desactivarPlato(id: number): void {

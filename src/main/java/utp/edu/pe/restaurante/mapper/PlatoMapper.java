@@ -49,6 +49,7 @@ public interface PlatoMapper {
     @Mapping(target = "categoria", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaActualizacion", ignore = true)
+    @Mapping(target = "activo", ignore = true)
     void updateEntity(CreatePlatoRequest request, @MappingTarget Plato plato);
 
     @Mapping(target = "id", ignore = true)

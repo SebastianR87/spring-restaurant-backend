@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utp.edu.pe.restaurante.dto.PedidoDTO;
-import utp.edu.pe.restaurante.dto.DetallePedidoDTO;
 import utp.edu.pe.restaurante.dto.request.CreatePedidoRequest;
 import utp.edu.pe.restaurante.dto.request.UpdatePedidoRequest;
 import utp.edu.pe.restaurante.dto.request.CreateDetallePedidoRequest;

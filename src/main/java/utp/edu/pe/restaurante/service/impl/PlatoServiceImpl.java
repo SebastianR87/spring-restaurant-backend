@@ -78,7 +78,13 @@ public class PlatoServiceImpl implements PlatoService {
 	        plato.setNombre(platoDetails.getNombre());
 	        plato.setDescripcion(platoDetails.getDescripcion());
 	        plato.setPrecio(platoDetails.getPrecio());
-	        plato.setImagenUrl(platoDetails.getImagenUrl());
+	        
+	        // Solo actualizar imagenUrl si se proporciona un valor no nulo y no vacío
+	        // Esto preserva la imagen existente cuando no se envía una nueva imagen
+	        if (platoDetails.getImagenUrl() != null && !platoDetails.getImagenUrl().trim().isEmpty()) {
+	            plato.setImagenUrl(platoDetails.getImagenUrl());
+	        }
+	        
 	        plato.setTiempoPreparacion(platoDetails.getTiempoPreparacion());
 	        plato.setDisponibleDomicilio(platoDetails.getDisponibleDomicilio());
 
