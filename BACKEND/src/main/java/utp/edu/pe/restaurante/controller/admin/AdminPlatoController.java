@@ -141,12 +141,18 @@ public class AdminPlatoController {
         try {
             // Obtener el plato existente para preservar la imagen si no se sube una nueva
             Plato platoExistente = platoService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Plato no encontrado"));
+                    .orElseThrow(() -> new ValidationException("Plato no encontrado con id: " + id));
             
             // Si se subió una nueva imagen, guardarla
             String finalImagenUrl = imagenUrl;
             if (imagen != null && !imagen.isEmpty()) {
-                finalImagenUrl = fileStorageService.saveFile(imagen, "platos");
+                try {
+                    finalImagenUrl = fileStorageService.saveFile(imagen, "platos");
+                } catch (IllegalArgumentException e) {
+                    throw new ValidationException("Error al guardar la imagen: " + e.getMessage());
+                } catch (Exception e) {
+                    throw new ValidationException("Error al procesar la imagen: " + e.getMessage());
+                }
             } else if (finalImagenUrl == null || finalImagenUrl.trim().isEmpty()) {
                 // Si no se subió nueva imagen y no se proporcionó imagenUrl, preservar la existente
                 finalImagenUrl = platoExistente.getImagenUrl();
@@ -165,8 +171,13 @@ public class AdminPlatoController {
 
             // Usar el método existente
             return updatePlato(id, updateRequest);
+        } catch (ValidationException e) {
+            // Re-lanzar ValidationException para que se maneje correctamente
+            throw e;
         } catch (Exception e) {
-            throw new ValidationException("Error al procesar la imagen: " + e.getMessage());
+            // Capturar cualquier otra excepción y proporcionar un mensaje más descriptivo
+            e.printStackTrace();
+            throw new ValidationException("Error al actualizar el plato: " + e.getMessage());
         }
     }
 

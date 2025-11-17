@@ -10,7 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.UUID;
+import java.text.Normalizer;
+import java.util.regex.Pattern;
 
 /**
  * Implementación del servicio de almacenamiento de archivos
@@ -42,20 +43,46 @@ public class FileStorageServiceImpl implements FileStorageService {
             Files.createDirectories(uploadPath);
         }
 
-        // Generar nombre único para el archivo
+        // Obtener nombre original del archivo
         String originalFilename = file.getOriginalFilename();
-        String extension = "";
-        if (originalFilename != null && originalFilename.contains(".")) {
-            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        if (originalFilename == null || originalFilename.isEmpty()) {
+            originalFilename = "imagen_" + System.currentTimeMillis();
         }
-        String uniqueFilename = UUID.randomUUID().toString() + extension;
+
+        // Extraer extensión
+        String extension = "";
+        String nameWithoutExtension = originalFilename;
+        if (originalFilename.contains(".")) {
+            int lastDotIndex = originalFilename.lastIndexOf(".");
+            extension = originalFilename.substring(lastDotIndex);
+            nameWithoutExtension = originalFilename.substring(0, lastDotIndex);
+        }
+
+        // Sanitizar el nombre del archivo (remover acentos, caracteres especiales, etc.)
+        String sanitizedName = sanitizeFilename(nameWithoutExtension);
+        
+        // Si el nombre está vacío después de sanitizar, usar un nombre por defecto
+        if (sanitizedName.isEmpty()) {
+            sanitizedName = "imagen_" + System.currentTimeMillis();
+        }
+
+        // Construir el nombre final del archivo
+        String finalFilename = sanitizedName + extension;
+
+        // Si el archivo ya existe, agregar un sufijo numérico
+        Path filePath = uploadPath.resolve(finalFilename);
+        int counter = 1;
+        while (Files.exists(filePath)) {
+            String newName = sanitizedName + "_" + counter + extension;
+            filePath = uploadPath.resolve(newName);
+            counter++;
+        }
 
         // Guardar archivo
-        Path filePath = uploadPath.resolve(uniqueFilename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // Retornar URL relativa (ej: /uploads/platos/uuid.jpg)
-        return "/uploads/" + subfolder + "/" + uniqueFilename;
+        // Retornar URL relativa (ej: /uploads/platos/nombre-archivo.jpg)
+        return "/uploads/" + subfolder + "/" + filePath.getFileName().toString();
     }
 
     @Override
@@ -65,22 +92,23 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
 
         try {
-            // Remover el prefijo /uploads/ si existe
+            // Extraer la ruta relativa del archivo desde la URL
             String relativePath = fileUrl;
             if (fileUrl.startsWith("/uploads/")) {
-                relativePath = fileUrl.substring(1); // Remover el primer /
+                // Remover /uploads/ y obtener la ruta relativa (ej: platos/imagen.jpg)
+                relativePath = fileUrl.substring("/uploads/".length());
             } else if (fileUrl.startsWith("uploads/")) {
-                relativePath = fileUrl;
-            } else {
+                relativePath = fileUrl.substring("uploads/".length());
+            } else if (fileUrl.contains("/uploads/")) {
                 // Si es una URL completa, extraer solo la ruta relativa
-                if (fileUrl.contains("/uploads/")) {
-                    relativePath = fileUrl.substring(fileUrl.indexOf("/uploads/") + 1);
-                } else {
-                    return false; // No es una ruta válida
-                }
+                relativePath = fileUrl.substring(fileUrl.indexOf("/uploads/") + "/uploads/".length());
+            } else {
+                // Asumir que es una ruta relativa directa
+                relativePath = fileUrl;
             }
 
-            Path filePath = Paths.get(relativePath);
+            // Construir la ruta completa usando el directorio base de uploads
+            Path filePath = Paths.get(uploadDir, relativePath);
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
                 return true;
@@ -104,22 +132,58 @@ public class FileStorageServiceImpl implements FileStorageService {
         }
 
         try {
+            // Extraer la ruta relativa del archivo desde la URL
             String relativePath = fileUrl;
             if (fileUrl.startsWith("/uploads/")) {
-                relativePath = fileUrl.substring(1);
+                // Remover /uploads/ y obtener la ruta relativa (ej: platos/imagen.jpg)
+                relativePath = fileUrl.substring("/uploads/".length());
             } else if (fileUrl.startsWith("uploads/")) {
-                relativePath = fileUrl;
+                relativePath = fileUrl.substring("uploads/".length());
             } else if (fileUrl.contains("/uploads/")) {
-                relativePath = fileUrl.substring(fileUrl.indexOf("/uploads/") + 1);
+                // Si es una URL completa, extraer solo la ruta relativa
+                relativePath = fileUrl.substring(fileUrl.indexOf("/uploads/") + "/uploads/".length());
             } else {
-                return false;
+                // Asumir que es una ruta relativa directa
+                relativePath = fileUrl;
             }
 
-            Path filePath = Paths.get(relativePath);
+            // Construir la ruta completa usando el directorio base de uploads
+            Path filePath = Paths.get(uploadDir, relativePath);
             return Files.exists(filePath);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * Sanitiza el nombre del archivo removiendo caracteres especiales y acentos
+     * @param filename Nombre original del archivo
+     * @return Nombre sanitizado
+     */
+    private String sanitizeFilename(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return "";
+        }
+
+        // Normalizar y remover acentos
+        String normalized = Normalizer.normalize(filename, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        String withoutAccents = pattern.matcher(normalized).replaceAll("");
+
+        // Reemplazar espacios con guiones bajos y remover caracteres especiales
+        String sanitized = withoutAccents
+                .replaceAll("[^a-zA-Z0-9\\s\\-_]", "") // Remover caracteres especiales excepto espacios, guiones y guiones bajos
+                .replaceAll("\\s+", "_") // Reemplazar espacios múltiples con un guión bajo
+                .replaceAll("_+", "_") // Reemplazar múltiples guiones bajos con uno solo
+                .replaceAll("^_|_$", "") // Remover guiones bajos al inicio y final
+                .toLowerCase(); // Convertir a minúsculas
+
+        // Limitar la longitud del nombre (máximo 200 caracteres)
+        if (sanitized.length() > 200) {
+            sanitized = sanitized.substring(0, 200);
+        }
+
+        return sanitized;
     }
 }
 

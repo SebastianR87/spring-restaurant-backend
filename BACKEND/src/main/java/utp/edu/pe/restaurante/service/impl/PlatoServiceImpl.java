@@ -74,21 +74,26 @@ public class PlatoServiceImpl implements PlatoService {
 	            plato.setCategoria(categoria);
 	        }
 
-	        // Actualizar campos
-	        plato.setNombre(platoDetails.getNombre());
-	        plato.setDescripcion(platoDetails.getDescripcion());
-	        plato.setPrecio(platoDetails.getPrecio());
-	        
-	        // Solo actualizar imagenUrl si se proporciona un valor no nulo y no vacío
-	        // Esto preserva la imagen existente cuando no se envía una nueva imagen
-	        if (platoDetails.getImagenUrl() != null && !platoDetails.getImagenUrl().trim().isEmpty()) {
-	            plato.setImagenUrl(platoDetails.getImagenUrl());
-	        }
-	        
-	        plato.setTiempoPreparacion(platoDetails.getTiempoPreparacion());
-	        plato.setDisponibleDomicilio(platoDetails.getDisponibleDomicilio());
+        // Actualizar campos
+        plato.setNombre(platoDetails.getNombre());
+        plato.setDescripcion(platoDetails.getDescripcion());
+        plato.setPrecio(platoDetails.getPrecio());
+        
+        // Solo actualizar imagenUrl si se proporciona un valor no nulo y no vacío
+        // Esto preserva la imagen existente cuando no se envía una nueva imagen
+        if (platoDetails.getImagenUrl() != null && !platoDetails.getImagenUrl().trim().isEmpty()) {
+            plato.setImagenUrl(platoDetails.getImagenUrl());
+        }
+        
+        plato.setTiempoPreparacion(platoDetails.getTiempoPreparacion());
+        plato.setDisponibleDomicilio(platoDetails.getDisponibleDomicilio());
+        
+        // Actualizar estado activo si se proporciona
+        if (platoDetails.getActivo() != null) {
+            plato.setActivo(platoDetails.getActivo());
+        }
 
-	        return platoRepository.save(plato);
+        return platoRepository.save(plato);
 	    }
 	    @Override
 	    @Transactional

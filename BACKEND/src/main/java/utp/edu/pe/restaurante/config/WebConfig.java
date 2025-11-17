@@ -20,9 +20,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // Mapear /uploads/** a la carpeta física de uploads
-        String uploadPath = Paths.get(uploadDir).toAbsolutePath().toString().replace("\\", "/");
+        // Normalizar la ruta para que funcione en Windows y Linux
+        String uploadPath = Paths.get(uploadDir).toAbsolutePath().toString();
+        // Asegurar que la ruta termine con / o \
+        if (!uploadPath.endsWith("/") && !uploadPath.endsWith("\\")) {
+            uploadPath += "/";
+        }
+        // Convertir separadores de Windows a formato URL
+        uploadPath = uploadPath.replace("\\", "/");
+        
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadPath + "/")
+                .addResourceLocations("file:" + uploadPath)
                 .setCachePeriod(3600); // Cache de 1 hora
     }
 }

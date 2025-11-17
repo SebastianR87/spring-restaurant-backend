@@ -258,8 +258,16 @@ export class Admin implements OnInit {
           this.loadPlatos();
           this.loadDashboard();
         },
-        error: () => {
-          this.showError('Error al guardar plato');
+        error: (err) => {
+          let errorMessage = 'Error al guardar plato';
+          if (err.error && err.error.message) {
+            errorMessage = err.error.message;
+          } else if (err.error && typeof err.error === 'string') {
+            errorMessage = err.error;
+          } else if (err.message) {
+            errorMessage = err.message;
+          }
+          this.showError(errorMessage);
           this.loading = false;
         }
       });
@@ -276,8 +284,16 @@ export class Admin implements OnInit {
           this.loadPlatos();
           this.loadDashboard();
         },
-        error: () => {
-          this.showError('Error al guardar plato');
+        error: (err) => {
+          let errorMessage = 'Error al guardar plato';
+          if (err.error && err.error.message) {
+            errorMessage = err.error.message;
+          } else if (err.error && typeof err.error === 'string') {
+            errorMessage = err.error;
+          } else if (err.message) {
+            errorMessage = err.message;
+          }
+          this.showError(errorMessage);
           this.loading = false;
         }
       });
