@@ -40,7 +40,7 @@ public class Pedido {
     private String telefonoContacto;
 
     @Column(name = "metodo_pago", nullable = false)
-    private String metodoPago; // EFECTIVO, TARJETA, TRANSFERENCIA
+    private String metodoPago; // EFECTIVO, YAPE
 
     @Column(name = "cambio_para", precision = 10, scale = 2)
     private BigDecimal cambioPara;

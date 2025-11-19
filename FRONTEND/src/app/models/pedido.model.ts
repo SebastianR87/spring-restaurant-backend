@@ -11,7 +11,7 @@ export interface CreatePedidoRequest {
   direccionEntrega?: string;
   instruccionesEntrega?: string;
   telefonoContacto?: string;
-  metodoPago: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
+  metodoPago: 'EFECTIVO' | 'YAPE';
   cambioPara?: number;
   detalles: CreateDetallePedidoRequest[];
 }

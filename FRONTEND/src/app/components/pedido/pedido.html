@@ -94,19 +94,10 @@
                 <input 
                   type="radio" 
                   name="metodoPago" 
-                  value="TARJETA"
+                  value="YAPE"
                   [(ngModel)]="pedidoForm.metodoPago">
                 <span class="radio-custom"></span>
-                <span class="radio-text">💳 Tarjeta</span>
-              </label>
-              <label class="radio-label">
-                <input 
-                  type="radio" 
-                  name="metodoPago" 
-                  value="TRANSFERENCIA"
-                  [(ngModel)]="pedidoForm.metodoPago">
-                <span class="radio-custom"></span>
-                <span class="radio-text">🏦 Transferencia</span>
+                <span class="radio-text">💚 Yape</span>
               </label>
             </div>
 
@@ -122,6 +113,45 @@
                   min="0"
                   placeholder="0.00"
                   required>
+              </div>
+            }
+
+            @if (pedidoForm.metodoPago === 'YAPE' && yapeConfig) {
+              <div class="yape-info-box">
+                <div class="yape-header">
+                  <h3>💚 Pago con Yape</h3>
+                </div>
+                <div class="yape-content">
+                  <div class="yape-code-section">
+                    <p class="yape-label">Código Yape:</p>
+                    <p class="yape-number">{{ yapeConfig.codigo }}</p>
+                    @if (yapeConfig.qrUrl) {
+                      <div class="qr-image-container">
+                        <img [src]="yapeConfig.qrUrl" alt="Código QR Yape" class="qr-image" (error)="onQrImageError($event)">
+                      </div>
+                    }
+                  </div>
+                  <div class="yape-number-section">
+                    <p class="yape-label">Número Yape:</p>
+                    <p class="yape-number">{{ yapeConfig.numero }}</p>
+                  </div>
+                  <div class="yape-instructions">
+                    <p class="instructions-title">📱 Instrucciones:</p>
+                    <ol class="instructions-list">
+                      <li>Realiza el pago a este código Yape</li>
+                      <li>Envía la captura de pantalla al número:</li>
+                      <li class="whatsapp-number">
+                        <a [href]="'https://wa.me/' + yapeConfig.whatsapp" target="_blank" class="whatsapp-link">
+                          📱 {{ yapeConfig.whatsapp }}
+                        </a>
+                      </li>
+                      <li>Tu pedido será confirmado después de verificar el pago</li>
+                    </ol>
+                  </div>
+                  <div class="yape-warning">
+                    ⚠️ Tu pedido quedará en espera hasta confirmar el pago
+                  </div>
+                </div>
               </div>
             }
           </div>

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { PedidoService } from '../../services/pedido.service';
 import { AuthService } from '../../services/auth.service';
+import { ConfigService, YapeConfig } from '../../services/config.service';
 import { CartItem } from '../../models/plato.model';
 import { CreatePedidoRequest, Pedido } from '../../models/pedido.model';
 
@@ -29,11 +30,13 @@ export class PedidoComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
   showSuccess: boolean = false;
+  yapeConfig: YapeConfig | null = null;
 
   constructor(
     private cartService: CartService,
     private pedidoService: PedidoService,
     private authService: AuthService,
+    private configService: ConfigService,
     private router: Router
   ) {}
 
@@ -64,6 +67,35 @@ export class PedidoComponent implements OnInit {
 
     // Preparar detalles del pedido
     this.prepareDetalles();
+
+    // Cargar configuración de Yape
+    this.loadYapeConfig();
+  }
+
+  loadYapeConfig(): void {
+    this.configService.getYapeConfig().subscribe({
+      next: (config) => {
+        this.yapeConfig = config;
+      },
+      error: (error) => {
+        console.error('Error al cargar configuración de Yape:', error);
+        // Si falla, usar valores por defecto
+        this.yapeConfig = {
+          numero: '908556931',
+          codigo: '908556931',
+          whatsapp: '908556931',
+          qrUrl: ''
+        };
+      }
+    });
+  }
+
+  onQrImageError(event: any): void {
+    // Si la imagen no se puede cargar, ocultarla
+    const img = event.target;
+    if (img && img.parentElement) {
+      img.parentElement.style.display = 'none';
+    }
   }
 
   prepareDetalles(): void {
