@@ -402,21 +402,31 @@
                     <span class="kanban-card-id">#{{ pedido.id }}</span>
                     <span class="kanban-card-fecha">{{ formatDate(pedido.fechaPedido) }}</span>
                   </div>
+
+
                   <div class="kanban-card-body">
-                    <div class="kanban-card-info">
-                      <span class="kanban-card-tipo">{{ pedido.tipoPedido }}</span>
-                      <span class="kanban-card-total">{{ formatCurrency(pedido.total) }}</span>
-                    </div>
-                    @if (pedido.direccionEntrega) {
-                      <div class="kanban-card-direccion">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                          <circle cx="12" cy="10" r="3" />
-                        </svg>
-                        {{ pedido.direccionEntrega }}
+                    <!-- Lista de Platos -->
+                    @if (pedido.detalles && pedido.detalles.length > 0) {
+                      <div class="kanban-platos-list">
+                        @for (detalle of pedido.detalles; track detalle.id || $index) {
+                          <div class="kanban-plato-item">
+                            <div class="kanban-plato-info">
+                              <span class="kanban-plato-nombre">{{ detalle.platoNombre || 'Plato' }}</span>
+                              <span class="kanban-plato-cantidad">× {{ detalle.cantidad }}</span>
+                            </div>
+                            <div class="kanban-plato-precio">
+                              <span class="kanban-plato-unitario">{{ formatCurrency(detalle.precioUnitario) }}</span>
+                              <span class="kanban-plato-subtotal">{{ formatCurrency(detalle.subtotal) }}</span>
+                            </div>
+                          </div>
+                        }
                       </div>
+                    } @else {
+                      <div class="kanban-platos-empty">No hay detalles disponibles</div>
                     }
                   </div>
+
+                  
                   <div class="kanban-card-actions">
                     <button class="btn-kanban btn-kanban-primary" (click)="aceptarPedido(pedido)">
                       Aceptar
@@ -449,21 +459,31 @@
                     <span class="kanban-card-id">#{{ pedido.id }}</span>
                     <span class="kanban-card-fecha">{{ formatDate(pedido.fechaPedido) }}</span>
                   </div>
+
+      
                   <div class="kanban-card-body">
-                    <div class="kanban-card-info">
-                      <span class="kanban-card-tipo">{{ pedido.tipoPedido }}</span>
-                      <span class="kanban-card-total">{{ formatCurrency(pedido.total) }}</span>
-                    </div>
-                    @if (pedido.direccionEntrega) {
-                      <div class="kanban-card-direccion">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                          <circle cx="12" cy="10" r="3" />
-                        </svg>
-                        {{ pedido.direccionEntrega }}
+                    <!-- Lista de Platos -->
+                    @if (pedido.detalles && pedido.detalles.length > 0) {
+                      <div class="kanban-platos-list">
+                        @for (detalle of pedido.detalles; track detalle.id || $index) {
+                          <div class="kanban-plato-item">
+                            <div class="kanban-plato-info">
+                              <span class="kanban-plato-nombre">{{ detalle.platoNombre || 'Plato' }}</span>
+                              <span class="kanban-plato-cantidad">× {{ detalle.cantidad }}</span>
+                            </div>
+                            <div class="kanban-plato-precio">
+                              <span class="kanban-plato-unitario">{{ formatCurrency(detalle.precioUnitario) }}</span>
+                              <span class="kanban-plato-subtotal">{{ formatCurrency(detalle.subtotal) }}</span>
+                            </div>
+                          </div>
+                        }
                       </div>
+                    } @else {
+                      <div class="kanban-platos-empty">No hay detalles disponibles</div>
                     }
                   </div>
+
+                  
                   <div class="kanban-card-actions">
                     <button class="btn-kanban btn-kanban-success" (click)="marcarListo(pedido)">
                       Listo
