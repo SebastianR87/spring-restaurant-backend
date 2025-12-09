@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { App } from './app';
 import { AppRoutingModule } from './app-routing-module';
 import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
 import { Menu } from './components/menu/menu';
 import { Admin } from './components/admin/admin';
 import { Home } from './components/home/home';
@@ -17,6 +18,7 @@ import { MisPedidosComponent } from './components/mis-pedidos/mis-pedidos';
   declarations: [
     App,
     LoginComponent,
+    RegisterComponent,
     Menu,
     Admin,
     Home,

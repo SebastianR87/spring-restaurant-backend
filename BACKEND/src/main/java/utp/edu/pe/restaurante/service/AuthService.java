@@ -1,6 +1,7 @@
 package utp.edu.pe.restaurante.service;
 
 import utp.edu.pe.restaurante.dto.request.LoginRequest;
+import utp.edu.pe.restaurante.dto.request.RegisterRequest;
 import utp.edu.pe.restaurante.dto.response.LoginResponse;
 
 /**
@@ -16,5 +17,14 @@ public interface AuthService {
      * @throws RuntimeException si las credenciales son inválidas o el usuario no existe
      */
     LoginResponse login(LoginRequest request);
+    
+    /**
+     * Registra un nuevo usuario en el sistema
+     * 
+     * @param request Datos de registro (nombre, email, password, etc.)
+     * @return LoginResponse con los datos del usuario creado
+     * @throws RuntimeException si el email ya existe o hay algún error de validación
+     */
+    LoginResponse register(RegisterRequest request);
 }
 

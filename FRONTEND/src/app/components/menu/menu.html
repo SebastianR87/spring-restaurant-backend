@@ -1,5 +1,6 @@
 <!-- Navbar Principal -->
 <nav class="main-navbar">
+  <div class="menu-overlay" [class.active]="menuOpen" (click)="closeMenu()"></div>
   <div class="navbar-content">
     <a routerLink="/" class="logo-section">
       <div class="logo">
@@ -7,33 +8,61 @@
       </div>
       <div class="logo-text">RESTAURANTE GUSTITOS</div>
     </a>
-    <div class="nav-links">
-      <a routerLink="/" class="nav-link">
+    <button class="menu-toggle" (click)="toggleMenu()" [class.active]="menuOpen" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="nav-links" [class.active]="menuOpen">
+      <div class="mobile-menu-header">
+        <div class="mobile-menu-logo">
+          <div class="logo">
+            <div class="logo-shield">G</div>
+          </div>
+          <div class="logo-text">RESTAURANTE GUSTITOS</div>
+        </div>
+        <button class="close-menu-btn" (click)="closeMenu()" aria-label="Cerrar menú">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <a routerLink="/" class="nav-link" (click)="closeMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
         <span>INICIO</span>
       </a>
-      <a routerLink="/menu" class="nav-link active">
+      <a routerLink="/menu" class="nav-link active" (click)="closeMenu()">
         <span>MENÚ</span>
       </a>
-      <a href="#" class="nav-link cart-link" (click)="toggleCart(); $event.preventDefault()">
+      <a href="#" class="nav-link cart-link" (click)="toggleCart(); closeMenu(); $event.preventDefault()">
         <span>HACER PEDIDO</span>
         @if (totalItems > 0) {
         <span class="badge">{{ totalItems }}</span>
         }
       </a>
-      <a routerLink="/mis-pedidos" class="nav-link">
+      <a routerLink="/mis-pedidos" class="nav-link" (click)="closeMenu()">
         <span>MIS PEDIDOS</span>
       </a>
+      @if (isAuthenticated() && getCurrentUser()) {
+      <div class="welcome-user">
+        <div class="welcome-icon">👋</div>
+        <div class="welcome-content">
+          <span class="welcome-text">Hola,</span>
+          <span class="user-name">{{ getCurrentUser()?.nombre }}</span>
+        </div>
+      </div>
+      }
       @if (!isAuthenticated()) {
-      <button class="btn-auth" (click)="goToLogin()">
+      <button class="btn-auth" (click)="goToLogin(); closeMenu()">
         INICIAR SESIÓN
       </button>
       }
       @if (isAuthenticated()) {
-      <button class="btn-auth btn-logout" (click)="logout()">
+      <button class="btn-auth btn-logout" (click)="logout(); closeMenu()">
         CERRAR SESIÓN
       </button>
       }

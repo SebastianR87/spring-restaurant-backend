@@ -3,12 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Plato, Categoria } from '../models/plato.model';
 import { Pedido } from '../models/pedido.model';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = 'http://localhost:8080/api/admin';
+  private apiUrl = `${API_CONFIG.apiUrl}/admin`;
 
   constructor(private http: HttpClient) {}
 
@@ -134,13 +135,13 @@ export class AdminService {
 
   // ========== SUBIDA DE ARCHIVOS ==========
   uploadPlatoImage(formData: FormData): Observable<any> {
-    return this.http.post<any>('http://localhost:8080/api/files/upload/plato', formData);
+    return this.http.post<any>(`${API_CONFIG.apiUrl}/files/upload/plato`, formData);
   }
 
   uploadImage(file: File, subfolder: string): Observable<{ url: string; message: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<{ url: string; message: string }>(`http://localhost:8080/api/files/upload/${subfolder}`, formData);
+    return this.http.post<{ url: string; message: string }>(`${API_CONFIG.apiUrl}/files/upload/${subfolder}`, formData);
   }
 }
 

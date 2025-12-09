@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LoginRequest, LoginResponse, Usuario } from '../models/usuario.model';
+import { LoginRequest, RegisterRequest, LoginResponse, Usuario } from '../models/usuario.model';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${API_CONFIG.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -29,6 +30,30 @@ export class AuthService {
       .pipe(
         tap(response => {
           if (response.id && response.message === 'Login exitoso') {
+            const user: Usuario = {
+              id: response.id!,
+              nombre: response.nombre!,
+              email: response.email!,
+              telefono: response.telefono,
+              direccion: response.direccion,
+              rol: response.rol as 'CLIENTE' | 'ADMIN',
+              activo: true
+            };
+            this.setCurrentUser(user);
+          }
+        })
+      );
+  }
+
+  register(registerRequest: RegisterRequest): Observable<LoginResponse> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, registerRequest, { headers })
+      .pipe(
+        tap(response => {
+          if (response.id && (response.message === 'Usuario registrado exitosamente' || response.message === 'Login exitoso')) {
             const user: Usuario = {
               id: response.id!,
               nombre: response.nombre!,
