@@ -12,6 +12,7 @@ import { Usuario } from '../../models/usuario.model';
 export class Home implements OnInit, OnDestroy, AfterViewInit {
   isAuthenticated: boolean = false;
   currentUser: Usuario | null = null;
+  menuOpen: boolean = false;
   private authSubscription?: Subscription;
   private galleryObserver?: IntersectionObserver;
 
@@ -123,5 +124,13 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
   goToPedido(): void {
     // Verificar si hay items en el carrito
     this.router.navigate(['/pedido']);
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
   }
 }

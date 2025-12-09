@@ -13,6 +13,14 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  nombre: string;
+  email: string;
+  password: string;
+  telefono?: string;
+  direccion?: string;
+}
+
 export interface LoginResponse {
   id?: number;
   nombre?: string;

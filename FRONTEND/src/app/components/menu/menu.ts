@@ -21,6 +21,7 @@ export class Menu implements OnInit, OnDestroy, AfterViewInit {
   isLoading: boolean = true;
   cartItems: CartItem[] = [];
   cartVisible: boolean = false;
+  menuOpen: boolean = false;
   totalItems: number = 0;
   totalPrice: number = 0;
 
@@ -211,5 +212,13 @@ export class Menu implements OnInit, OnDestroy, AfterViewInit {
 
   onImageError(event: Event): void {
     this.imageService.handleImageError(event);
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
   }
 }
