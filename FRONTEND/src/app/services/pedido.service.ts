@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pedido, CreatePedidoRequest } from '../models/pedido.model';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PedidoService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = API_CONFIG.apiUrl;
 
   constructor(private http: HttpClient) {}
 

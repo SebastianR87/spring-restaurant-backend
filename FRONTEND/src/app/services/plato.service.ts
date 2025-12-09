@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Plato, Categoria } from '../models/plato.model';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlatoService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = API_CONFIG.apiUrl;
 
   constructor(private http: HttpClient) {}
 

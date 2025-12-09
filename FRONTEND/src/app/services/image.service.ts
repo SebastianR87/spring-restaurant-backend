@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { API_CONFIG } from '../config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImageService {
-  private readonly API_BASE_URL = 'http://localhost:8080';
+  private readonly API_BASE_URL = API_CONFIG.baseUrl;
   private readonly DEFAULT_IMAGE = '/assets/images/platos/default.svg';
 
   /**

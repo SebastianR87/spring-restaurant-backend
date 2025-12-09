@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_CONFIG } from '../config/api.config';
 
 export interface YapeConfig {
   numero: string;
@@ -13,7 +14,7 @@ export interface YapeConfig {
   providedIn: 'root'
 })
 export class ConfigService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = API_CONFIG.apiUrl;
 
   constructor(private http: HttpClient) {}
 
