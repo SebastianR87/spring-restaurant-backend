@@ -21,11 +21,18 @@ public class RegisterRequest {
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
     
-    @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
     private String telefono;
     
-    @Size(max = 500, message = "La dirección no puede exceder 500 caracteres")
     private String direccion;
+    
+    // Métodos helper para verificar si los campos opcionales están vacíos
+    public boolean hasTelefono() {
+        return telefono != null && !telefono.trim().isEmpty();
+    }
+    
+    public boolean hasDireccion() {
+        return direccion != null && !direccion.trim().isEmpty();
+    }
     
     public RegisterRequest() {
     }
